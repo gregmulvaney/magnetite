@@ -5,6 +5,7 @@ use crate::{
     AppState,
 };
 use axum::{debug_handler, extract::State, Json};
+use chrono;
 use regex::Regex;
 use sea_orm::{ActiveValue::Set, EntityTrait};
 use serde::{Deserialize, Serialize};
@@ -22,14 +23,12 @@ pub async fn add_downloads_handler(
 ) {
     // Parse url into a URL object
     let parsed_url = Url::parse(&payload.url).unwrap();
-    let mut download: DownloadItem = ();
+    // Initialize empty download object
+    let mut download: DownloadItem = Default::default();
     match parsed_url.host_str().unwrap() {
         "mega.nz" => {
-            let re = Regex::new(MegaPlugin::default().regex).unwrap();
-            if re.is_match(&payload.url) {
+            if MegaPlugin::validate_url(&payload.url).await {
                 download = MegaPlugin::get_download_data(payload.url).await.unwrap();
-            } else {
-                tracing::error!("Invalid mega.nz url");
             }
         }
         _ => {
@@ -43,6 +42,10 @@ pub async fn add_downloads_handler(
         size: Set(download.size as i32),
         host: Set(download.host),
         status: Set("pending".to_string()),
+        created_at: Set(chrono::naive::NaiveDateTime::from_timestamp(
+            chrono::Local::now().timestamp(),
+            0,
+        )),
         ..Default::default()
     };
 

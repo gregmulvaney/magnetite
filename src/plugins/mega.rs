@@ -1,21 +1,11 @@
 use crate::plugins::{DownloadItem, HostPlugin};
-use std::{error::Error, simd::u64x1};
+use std::error::Error;
 
-pub struct MegaPlugin {
-    url: String,
-    pub regex: &'static str,
-}
-
-impl Default for MegaPlugin {
-    fn default() -> Self {
-        Self {
-            url: String::new(),
-            regex: r#"(https?:\/\/)?(www\.)?mega\.nz\/(file|folder)\/[a-zA-Z0-9#!_-]{8,11}#?[a-zA-Z0-9#!_-]{0,8}"#,
-        }
-    }
-}
+pub struct MegaPlugin {}
 
 impl HostPlugin for MegaPlugin {
+    const REGEX: &'static str = r#"(https?:\/\/)?(www\.)?mega\.nz\/(file|folder)\/[a-zA-Z0-9#!_-]{8,11}#?[a-zA-Z0-9#!_-]{0,8}"#;
+
     async fn get_download_data(url: String) -> Result<DownloadItem, Box<dyn Error>> {
         let http_client = reqwest::Client::new();
         let mega_client = mega::Client::builder().build(http_client).unwrap();
