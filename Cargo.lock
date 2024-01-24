@@ -1474,6 +1474,8 @@ dependencies = [
  "axum",
  "headless_chrome",
  "mega",
+ "regex",
+ "reqwest",
  "sea-orm",
  "serde",
  "serde_json",
@@ -1481,6 +1483,7 @@ dependencies = [
  "tower-http",
  "tracing",
  "tracing-subscriber",
+ "url",
 ]
 
 [[package]]
