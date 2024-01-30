@@ -2,6 +2,7 @@ mod entities;
 mod handlers;
 mod plugins;
 
+use crate::plugins::HostPlugin;
 use axum::{routing::get, Router};
 use sea_orm::{ConnectOptions, Database, DatabaseConnection};
 use std::env;
